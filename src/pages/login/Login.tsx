@@ -1,22 +1,46 @@
 import React, { ChangeEvent, FormEventHandler, useState } from "react";
 import styles from "./login.module.scss";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { appAuth } from "../../firebase/config";
+import { useAppDispatch } from "../../hooks/useReduxToolkitHook";
+import { useNavigate } from "react-router-dom";
+import { AuthUserData, login } from "../../store/authSlice";
 
 const Login = () => {
   const [userEmail, setUserEmail] = useState<string>("");
   const [userPassword, setUserPassword] = useState<string>("");
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-  const inputChangeHandler = (e:ChangeEvent<HTMLInputElement>, setState:(text: string) => void) => {
-    setState(e.target.value)
-  }
-  const submitHandler:FormEventHandler<HTMLFormElement> = (e) => {
+  const inputChangeHandler = (
+    e: ChangeEvent<HTMLInputElement>,
+    setState: (text: string) => void
+  ) => {
+    setState(e.target.value);
+  };
+  const submitHandler: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    const userData = {
-      userEmail: userEmail,
-      userPassword: userPassword,
-    };
 
-    console.log(userData);
-  }
+    try {
+      const user = await signInWithEmailAndPassword(
+        appAuth,
+        userEmail,
+        userPassword
+      );
+
+      const userData: AuthUserData = {
+        uid: user.user.uid,
+        email: user.user.email,
+        displayName: user.user.displayName,
+        photoURL: user.user.photoURL,
+      };
+      dispatch(login(userData));
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
   return (
     <main>
       <h2 className={styles["img-title"]}>
