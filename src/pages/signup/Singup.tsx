@@ -1,11 +1,13 @@
 import React, { ChangeEvent, FormEventHandler, useState } from "react";
 import styles from "../login/login.module.scss";
 import { useSignup } from "../../hooks/useSignup";
+import { useNavigate } from "react-router-dom";
 
 const Singup = () => {
   const [userEmail, setUserEmail] = useState<string>("");
   const [userPassword, setUserPassword] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
+  const navigate = useNavigate();
 
   const { error, isPending, signup } = useSignup();
 
@@ -28,11 +30,13 @@ const Singup = () => {
 
     if(error) {
       alert(error);
+      return;
     }
 
     setUserEmail("");
     setUserPassword("");
     setUserName("");
+    navigate("/");
   };
 
   return isPending ? (
