@@ -1,31 +1,42 @@
+import { DiaryItemData } from "../../hooks/useCollection";
+import useFireStore from "../../hooks/useFireStore";
 import styles from "./home.module.scss";
 
-const DiaryItem = () => {
+
+const DiaryItem = ({ title, content, date, id }: DiaryItemData) => {
+  const fireStore = useFireStore();
+  const handleDeleteDiary = () => {
+    fireStore?.deleteDocument(id)
+  }
+  const formattedDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, "0");
+    const day = `${date.getDate()}`.padStart(2, "0");
+    const dayOfWeek = new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(date);
+
+    return `${year}. ${month}. ${day} ${dayOfWeek}`;
+  };
   return (
-    <li>
-          <article className={styles["diary-article"]}>
-            <h3 className={styles["article-title"]}>이는 청춘의 것은 그들의 운다.</h3>
-            <time className={styles["article-time"]}>2023.02.24.THU</time>
-            <p className={styles["article-content"]}>이는 청춘의 것은 그들의 운다. 동산에는 수 것이 있는 뼈 이상의 쓸쓸하랴? 없으면, 날카로우나 뛰노는 풀이 아니다. 황금시대를 무한한 따뜻한
-              청춘이
-              같으며, 속잎나고, 운다. 위하여서 커다란
-              영락과 따뜻한 피고
-              안고, 뼈 봄바람이다. 가는 곧 아니한 눈에 얼마나 있음으로써 지혜는 대한 얼마나 봄바람이다. 때까지 위하여 가지에 열락의 것이다. 그림자는 꽃이 천하를 우리 찬미를 원대하고, 인생을 때에,
-              황금시대다. 목숨을
-              할지니, 청춘은 용기가 말이다.</p>
+    <li id={`${id}`}>
+      <article className={styles["diary-article"]}>
+        <h3 className={styles["article-title"]}>{title}</h3>
+        <time className={styles["article-time"]}>
+          {formattedDate(date)}
+        </time>
+        <p className={styles["article-content"]}>{content}</p>
 
-            <div className={styles["button-group"]}>
-              <button type="button">
-                <img src="./img/icon-edit.svg" alt="수정" />
-              </button>
-              <span></span>
-              <button type="button">
-                <img src="./img/icon-delete.svg" alt="삭제" />
-              </button>
-            </div>
-          </article>
-        </li>
-  )
-}
+        <div className={styles["button-group"]}>
+          <button type="button">
+            <img src="./img/icon-edit.svg" alt="수정" />
+          </button>
+          <span></span>
+          <button type="button" onClick={handleDeleteDiary}>
+            <img src="./img/icon-delete.svg" alt="삭제" />
+          </button>
+        </div>
+      </article>
+    </li>
+  );
+};
 
-export default DiaryItem
+export default DiaryItem;

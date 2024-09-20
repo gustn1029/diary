@@ -38,6 +38,9 @@
   h3 {
     margin: 0;
   }
+  section {
+    flex-grow: 1;
+  }
   
   .diary-article {
     border-color: #677880;
